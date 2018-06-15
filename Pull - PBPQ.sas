@@ -835,7 +835,7 @@ data merged_l_b2;
 	if ownbr = "1003" and zip =: "87112" then ownbr = "1013";
 	if brno = "1016" then brno = "1008";
 	if brno = "1003" and zip =: "87112" then brno = "1013";
-	if purcd in ("011", "020") then dlqren_flag = "X";
+	if purcd in ("011", "020", "015") then dlqren_flag = "X";
 	if ownbr = "0251" then ownbr = "0580";
 	if ownbr = "0252" then ownbr = "0683";
 	if ownbr = "0253" then ownbr = "0581";
