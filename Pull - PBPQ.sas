@@ -1,4 +1,4 @@
-*** Change dates in the lines immediately below along with file    ***;
+﻿*** Change dates in the lines immediately below along with file    ***;
 *** paths. For the files paths, you will likely need to create a   ***;
 *** new folder "PBPQ" in the appropriate month file. Do not change ***;
 *** the argument to the left of the comma - only change what is to ***;
@@ -11,25 +11,25 @@
 *** to fix "unitialized variables":  replace code "null" with "."  ***;
 
 data _null_;
-	call symput('_5YR','2013-06-02');
-	call symput ('_13MO','2017-05-01');
-	call symput ('_2YR','2016-06-01');
-	call symput ('_1DAY','2018-05-31');
-	call symput ('PBPQ_ID', 'PBPQ7.0_2018');
+	call symput('_5YR','2013-09-05');
+	call symput ('_13MO','2017-08-04');
+	call symput ('_2YR','2016-09-04');
+	call symput ('_1DAY','2018-09-03');
+	call symput ('PBPQ_ID', 'PBPQ10.0_2018');
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-05-31-2018-06-27.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-08-30-2018-06-27.xlsx'); 
 	call symput ('finalexportflagged', 
-		'\\mktg-app01\E\Production\2018\07-July_2018\PBPQ\PBPQ_flagged_20180601.txt');
+		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_flagged_20180904.txt');
 	call symput ('finalexportdropped', 
-		'\\mktg-app01\E\Production\2018\07-July_2018\PBPQ\PBPQ_finalPBPQ_20180601.txt');
+		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_finalPBPQ_20180904.txt');
 	call symput ('riskfile', 
-		'\\mktg-app01\E\Production\2018\07-July_2018\PBPQ\PBPQ_RISK_PBJulyUpsell_20180601.csv');
+		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_RISK_PBSepUpsell_20180904.csv');
 	*** This is the file we send to Risk to audit ---------------- ***;
 	call symput ('eqxfile', 
-		'\\mktg-app01\E\Production\2018\07-July_2018\PBPQ\PBPQ_RISK_PBJulyUpsell_SU_20180601.csv');  
+		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_RISK_PBSepUpsell_SU_20180904.csv');  
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2018\07-July_2018\PBPQ\PBPQ_PBPQSuppression_20180601.txt');
+		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_PBPQSuppression_20180904.txt');
 run;
 
 data loan1;
