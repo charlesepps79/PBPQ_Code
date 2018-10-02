@@ -1,9 +1,9 @@
-*** bring branchnumber in as string ------------------------------ ***;
+﻿*** bring branchnumber in as string ------------------------------ ***;
 data _null_;
 	call symput("outfilex",
-		"\\mktg-app01\E\Production\Audits\PBPQ AUDIT - 9.0 - Final Mail File.xlsx");
+		"\\mktg-app01\E\Production\Audits\PBPQ AUDIT - 10.0 - Final Mail File.xlsx");
 	call symput("filename",
-		"WORK.'118649A_RMC_PBPQ9.0_18_FINA_0000'n");
+		"WORK.'118650A_RMC_PBPQ10.0_18_Final_Ma'n");
 run;
 
 data code_standard;
