@@ -10,26 +10,44 @@
 *** Change 3/6/2018 by Brad:  data step atb3 (near rows 592-600):  ***;
 *** to fix "unitialized variables":  replace code "null" with "."  ***;
 
+OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
+
+%LET PULLDATE = %SYSFUNC(today(), yymmdd10.);
+%PUT "&PULLDATE";
+
+%LET _5YR_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-1825);
+%LET _5YR = %SYSFUNC(putn(&_5YR_NUM,yymmdd10.));
+%PUT "&_5YR";
+
+%LET _13MO_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-395);
+%LET _13MO = %SYSFUNC(putn(&_13MO_NUM,yymmdd10.));
+%PUT "&_13MO";
+
+%LET _2YR_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-730);
+%LET _2YR = %SYSFUNC(putn(&_2YR_NUM,yymmdd10.));
+%PUT "&_2YR";
+
+%LET _1DAY_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-1);
+%LET _1DAY = %SYSFUNC(putn(&_1DAY_NUM,yymmdd10.));
+%PUT "&_1DAY";
+
+
 data _null_;
-	call symput('_5YR','2013-09-05');
-	call symput ('_13MO','2017-08-04');
-	call symput ('_2YR','2016-09-04');
-	call symput ('_1DAY','2018-09-03');
-	call symput ('PBPQ_ID', 'PBPQ10.0_2018');
+	call symput ('PBPQ_ID', 'PBPQ1.0_2019');
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-08-30-2018-06-27.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-11-29-2018-06-27.xlsx'); 
 	call symput ('finalexportflagged', 
-		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_flagged_20180904.txt');
+		'\\mktg-app01\E\Production\2018\12-December_2018\PBPQ\PBPQ_flagged_20181206.txt');
 	call symput ('finalexportdropped', 
-		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_finalPBPQ_20180904.txt');
+		'\\mktg-app01\E\Production\2018\12-December_2018\PBPQ\PBPQ_finalPBPQ_20181206.txt');
 	call symput ('riskfile', 
-		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_RISK_PBSepUpsell_20180904.csv');
+		'\\mktg-app01\E\Production\2018\12-December_2018\PBPQ\PBPQ_RISK_PBSepUpsell_20181206.csv');
 	*** This is the file we send to Risk to audit ---------------- ***;
 	call symput ('eqxfile', 
-		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_RISK_PBSepUpsell_SU_20180904.csv');  
+		'\\mktg-app01\E\Production\2018\12-December_2018\PBPQ\PBPQ_RISK_PBSepUpsell_SU_20181206.csv');  
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2018\09-September_2018\PBPQ\PBPQ_PBPQSuppression_20180904.txt');
+		'\\mktg-app01\E\Production\2018\12-December_2018\PBPQ\PBPQ_PBPQSuppression_20181206.txt');
 run;
 
 data loan1;
@@ -47,8 +65,8 @@ data loan1;
 		  PlDate = "" & 
 		  poffdate = "" & 
 		  ClassTranslation not in ("Auto-I", "Auto-D") & 
-		  ownst in ("SC", "NM", "NC", "OK", "VA", "TX", "AL", "GA",
-					"TN");
+		  ownst in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
+					"TX", "VA", "WI");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if cifno not =: "B";
 run;
@@ -214,8 +232,8 @@ data loanextra;
 		  poffdate = "" & 
 		  pldate = "" & 
 		  bnkrptdate = "" & 
-		  ownst in ("SC", "NM", "NC", "OK", "VA", "TX", "AL", "GA",
-					"TN") & 
+		  ownst in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
+					"TX", "VA", "WI") & 
 		  ClassTranslation not in ("Auto-I", "Auto-D");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if ssno1 =: "99" then BadSSN = "X"; /* Flag bad ssns */
@@ -260,8 +278,8 @@ data loanparadata;
 		  poffdate = "" & 
 		  pldate = "" & 
 		  bnkrptdate = "" & 
-		  ownst not in ("SC", "NM", "NC", "OK", "VA", "TX", "AL", "GA",
-						"TN") & 
+		  ownst not in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
+						"TX", "VA", "WI") & 
 		  ClassTranslation not in ("Auto-I", "Auto-D");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if ssno1 =: "99" then BadSSN = "X"; /* Flag bad ssns */
@@ -807,8 +825,9 @@ run;
 *** Bad Branch Flags --------------------------------------------- ***;
 data merged_l_b2;
 	set merged_l_b2;
-	if ownbr in("600", "9000", "198", "1", "0001", "0198", 
-				"0600") then BadBranch_flag = "X";
+	if ownbr in("600", "9000", "198", "1", "0001", "0198", "0600", 
+				"0398", "0498", "0698", "0898") 
+		then BadBranch_flag = "X";
 	if substr(ownbr, 3, 2) = "99" then BadBranch_flag = "X";
 	*** Flag incomplete info ------------------------------------- ***;
 	if adr1 = "" then MissingInfo_flag = "X"; 
@@ -819,8 +838,8 @@ data merged_l_b2;
 	*** Flag incomplete info ------------------------------------- ***;
 	if Lastname = "" then MissingInfo_flag = "X";
 	*** Find states outside of footprint ------------------------- ***;
-	if state not in("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
-					"VA") then OOS_flag = "X"; 
+	if state not in("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
+					"TX", "VA", "WI") then OOS_flag = "X"; 
 	if confidential = "Y" then DNS_DNH_flag = "X"; /* Flag DNS DNH */
 	if solicit = "N" then DNS_DNH_flag = "X"; /*Flag DNS DNH */
 	if ceaseanddesist = "Y" then DNS_DNH_flag = "X"; /* Flag DNS DNH */
