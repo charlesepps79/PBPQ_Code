@@ -33,21 +33,21 @@ OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
 
 
 data _null_;
-	call symput ('PBPQ_ID', 'PBPQ2.0_2019');
+	call symput ('PBPQ_ID', 'PBPQ4.0_2019');
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-01-03-2019-06-28.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-03-07-2019-06-27.xlsx'); 
 	call symput ('finalexportflagged', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\PBPQ\PBPQ_flagged_20180110.txt');
+		'\\mktg-app01\E\Production\2019\04_APR_2019\PBPQ\PBPQ_flagged_20180313.txt');
 	call symput ('finalexportdropped', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\PBPQ\PBPQ_finalPBPQ_20180110.txt');
+		'\\mktg-app01\E\Production\2019\04_APR_2019\PBPQ\PBPQ_finalPBPQ_20180313.txt');
 	call symput ('riskfile', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\PBPQ\PBPQ_RISK_PBSepUpsell_20180110.csv');
+		'\\mktg-app01\E\Production\2019\04_APR_2019\PBPQ\PBPQ_RISK_PBSepUpsell_20180313.csv');
 	*** This is the file we send to Risk to audit ---------------- ***;
 	call symput ('eqxfile', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\PBPQ\PBPQ_RISK_PBSepUpsell_SU_20180110.csv');  
+		'\\mktg-app01\E\Production\2019\04_APR_2019\PBPQ\PBPQ_RISK_PBSepUpsell_SU_20180313.csv');  
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\PBPQ\PBPQ_PBPQSuppression_20180110.txt');
+		'\\mktg-app01\E\Production\2019\04_APR_2019\PBPQ\PBPQ_PBPQSuppression_20180313.txt');
 run;
 
 data loan1;
@@ -870,6 +870,8 @@ data merged_l_b2;
 	if ownbr = "0302" then ownbr = "0133";
 	if brno = "0668" then brno = "0680";
 	if ownbr = "0668" then ownbr = "0680";
+	if ownbr = "1018" then ownbr = "1008";
+	if brno = "1018" then brno = "1008";
 run;
 
 *** Ed's dnsdnh -------------------------------------------------- ***;
@@ -929,9 +931,11 @@ proc format; /* define format for delq */
 run;
 
 data atb; 
-	set dw.atb_data(
-		keep = bracctno age2 yearmonth 
-	where = (yearmonth between "&_13MO" and "&_1DAY"));
+	set dw.vw_AgedTrialBalance(
+		keep = LoanNumber AGE2 BOM 
+	where = (BOM between "&_13MO" and "&_1DAY"));
+	BRACCTNO = LoanNumber;
+	YEARMONTH = BOM;
 	atbdt = input(substr(yearmonth, 6, 2) || '/' || 
 				  substr(yearmonth, 9, 2) || '/' || 
 				  substr(yearmonth, 1, 4), mmddyy10.);     
@@ -1362,6 +1366,7 @@ data final3;
 	if "2016-01-01" <= entdate <= "2016-12-31" then EntYear = 2016;
 	if "2017-01-01" <= entdate <= "2017-12-31" then EntYear = 2017;
 	if "2018-01-01" <= entdate <= "2018-12-31" then EntYear = 2018;
+	if "2019-01-01" <= entdate <= "2019-12-31" then EntYear = 2019;
 run;
 
 data check;
