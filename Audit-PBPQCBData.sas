@@ -9,7 +9,7 @@
 *** For confirmation: O\Risk\PBPQ\CriteriaPBPQ_June_2017 --------- ***;
 
 data _null_;
-	call symput("cbdata", "WORK.'120678A_RMC_PBPQ4.0_19_OFFER_ASS'n");
+	call symput("cbdata", "WORK.'121583A_RMC_PBPQ6.0_19_OFFER_ASS'n");
 run;
 
 title;
