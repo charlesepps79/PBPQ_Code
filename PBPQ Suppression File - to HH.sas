@@ -1,13 +1,13 @@
-data _null_;
-	call symput ('_1yr1month','2018-2-18');
-	call symput ('yesterday','2018-3-20');
+﻿data _null_;
+	call symput ('_1yr1month','2018-5-05');
+	call symput ('yesterday','2019-6-04');
 	call symput ('HHsuppression', 
-		'\\rmc.local\dfsroot\Marketing\2019 Programs\1) Direct Mail Programs\FB-PB\FBX-PB April\PBPQ\PBPQ Suppressions\APRPBPQSuppression.txt');
+		'\\mktg-app01\E\Production\2019\07_JULY_2019\PBPQ\JULPBPQSuppression.txt');
 run;
 	
 data pbpq;
 ** \\server-fs01\Marketing\Risk\PBPQ\PBPQmmm2017_Drop\PBmmmUpsell.csv';
-	set WORK.PBPQ_RISK_PBSepUpsell_20180313;
+	set WORK.risk;
 run;					
 
 proc format; /* define format for delq*/
