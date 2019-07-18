@@ -32,21 +32,21 @@ OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
 %PUT "&_1DAY";
 
 data _null_;
-	call symput ('PBPQ_ID', 'PBPQ7.0_2019');
+	call symput ('PBPQ_ID', 'PBPQ8.0_2019');
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-05-30-2019-06-28.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-06-27-2019-06-28.xlsx'); 
 	call symput ('finalexportflagged', 
-		'\\mktg-app01\E\Production\2019\07_JULY_2019\PBPQ\PBPQ_flagged_20180605.txt');
+		'\\mktg-app01\E\Production\2019\08_AUGUST_2019\PBPQ\PBPQ_flagged_20190703.txt');
 	call symput ('finalexportdropped', 
-		'\\mktg-app01\E\Production\2019\07_JULY_2019\PBPQ\PBPQ_finalPBPQ_20180605.txt');
+		'\\mktg-app01\E\Production\2019\08_AUGUST_2019\PBPQ\PBPQ_finalPBPQ_20190703.txt');
 	call symput ('riskfile', 
-		'\\mktg-app01\E\Production\2019\07_JULY_2019\PBPQ\PBPQ_RISK_PBSepUpsell_20180605.csv');
+		'\\mktg-app01\E\Production\2019\08_AUGUST_2019\PBPQ\PBPQ_RISK_PBSepUpsell_20190703.csv');
 	*** This is the file we send to Risk to audit ---------------- ***;
 	call symput ('eqxfile', 
-		'\\mktg-app01\E\Production\2019\07_JULY_2019\PBPQ\PBPQ_RISK_PBSepUpsell_SU_20180605.csv');  
+		'\\mktg-app01\E\Production\2019\08_AUGUST_2019\PBPQ\PBPQ_RISK_PBSepUpsell_SU_20190703.csv');  
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2019\07_JULY_2019\PBPQ\PBPQ_PBPQSuppression_20180605.txt');
+		'\\mktg-app01\E\Production\2019\08_AUGUST_2019\PBPQ\PBPQ_PBPQSuppression_20190703.txt');
 run;
 
 data loan1;
@@ -853,7 +853,8 @@ data merged_l_b2;
 	if ownbr = "1003" and zip =: "87112" then ownbr = "1013";
 	if brno = "1016" then brno = "1008";
 	if brno = "1003" and zip =: "87112" then brno = "1013";
-	if purcd in ("011", "020", "015") then dlqren_flag = "X";
+	if purcd in ("011", "020", "015", "16", "21") 
+		then dlqren_flag = "X";
 	if ownbr = "0251" then ownbr = "0580";
 	if ownbr = "0252" then ownbr = "0683";
 	if ownbr = "0253" then ownbr = "0581";
@@ -928,7 +929,7 @@ proc format; /* define format for delq */
    				8 = '180+cd'
    				other = ' ';
 run;
-
+/*
 data atb; 
 	set dw.vw_AgedTrialBalance(
 		keep = LoanNumber AGE2 BOM 
@@ -985,6 +986,68 @@ data atb;
 	keep bracctno delq1-delq12 cd cd30 cd60 age2 atbdt age recent3
 		 recent4to6 recent6_60 first6_60 first6 recent6;
 run;
+*/
+**********************************************************************;
+**********************************************************************;
+**********************************************************************;
+
+data atb; 
+	set dw.vw_ATB_Data(
+		keep = BRACCTNO AGE2 YEARMONTH 
+	where = (YEARMONTH between "&_13MO" and "&_1DAY"));
+	atbdt = input(substr(yearmonth, 6, 2) || '/' || 
+				  substr(yearmonth, 9, 2) || '/' || 
+				  substr(yearmonth, 1, 4), mmddyy10.);     
+	*** age is month number of loan where 1 is most recent month - ***;
+	age = intck('month', atbdt, "&sysdate"d); 
+	cd = substr(age2, 1, 1) * 1;   
+	*** i.e. for age=1: this is most recent month. Fill delq1,     ***;
+	*** which is delq for month 1, with delq status (cd). -------- ***;
+   	if age = 1 then delq1 = cd;
+   	else if age = 2 then delq2 = cd;
+   	else if age = 3 then delq3 = cd;
+   	else if age = 4 then delq4 = cd;
+   	else if age = 5 then delq5 = cd;
+   	else if age = 6 then delq6 = cd;
+   	else if age = 7 then delq7 = cd;
+   	else if age = 8 then delq8 = cd;
+   	else if age = 9 then delq9 = cd;
+   	else if age = 10 then delq10 = cd;
+   	else if age = 11 then delq11 = cd;
+   	else if age = 12 then delq12 = cd;
+	*** if cd is greater than 60-89 days late, set cd60 to 1 ----- ***;
+   	if cd > 3 then cd60 = 1; 
+	*** if cd is greater than 30-59 days late, set cd30 to 1 ----- ***;
+   	if cd > 2 then cd30 = 1; 
+
+	if age < 4 then do;
+		*** note 30-59s in last six months ----------------------- ***;
+		if cd > 2 then recent3 = 1; 
+	end;
+
+	else if 3 < age < 7 then do;
+		*** note 30-59s from 7 to 12 months ago ------------------ ***;
+		if cd > 2 then recent4to6 = 1; 
+	end;
+
+	if age < 7 then do;
+		*** note 30-59s in last six months ----------------------- ***;
+		if cd > 2 then recent6 = 1; 
+		if cd > 3 then recent6_60 = 1;
+	end;
+
+	else if 6 < age < 13 then do;
+		*** note 30-59s from 7 to 12 months ago ------------------ ***;
+		if cd > 2 then first6 = 1; 
+		if cd > 3 then first6_60 = 1;
+	end;
+
+	keep bracctno delq1-delq12 cd cd30 cd60 age2 atbdt age recent3
+		 recent4to6 recent6_60 first6_60 first6 recent6;
+run;
+**********************************************************************;
+**********************************************************************;
+**********************************************************************;
 
 data atb2;
 	set atb;
