@@ -32,21 +32,21 @@ OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
 %PUT "&_1DAY";
 
 data _null_;
-	call symput ('PBPQ_ID', 'PBPQ2.0_2020');    
+	call symput ('PBPQ_ID', 'PBPQ4.1_2020');    
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-01-09-2020-06-27.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-03-05-2020-06-30.xlsx'); 
 	call symput ('finalexportflagged', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\PBPQ\PBPQ_flagged_20200114.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_flagged_20200311.txt');
 	call symput ('finalexportdropped', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\PBPQ\PBPQ_finalPBPQ_20200114.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_finalPBPQ_20200311.txt');
 	call symput ('riskfile', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\PBPQ\PBPQ_RISK_PBFebUpsell_20200114.csv');
+		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_RISK_PBFebUpsell_20200311.csv');
 	*** This is the file we send to Risk to audit ---------------- ***;
 	call symput ('eqxfile', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\PBPQ\PBPQ_RISK_PBFebUpsell_SU_20200114.csv');  
+		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_RISK_PBFebUpsell_SU_20200311.csv');  
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\PBPQ\PBPQ_PBPQSuppression_20200114.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_PBPQSuppression_20200311.txt');
 run;
 
 data loan1;
