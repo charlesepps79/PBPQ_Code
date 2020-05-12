@@ -1,4 +1,4 @@
-﻿*** Change dates in the lines immediately below along with file    ***;
+*** Change dates in the lines immediately below along with file    ***;
 *** paths. For the files paths, you will likely need to create a   ***;
 *** new folder "PBPQ" in the appropriate month file. Do not change ***;
 *** the argument to the left of the comma - only change what is to ***;
@@ -32,21 +32,21 @@ OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
 %PUT "&_1DAY";
 
 data _null_;
-	call symput ('PBPQ_ID', 'PBPQ4.1_2020');    
+	call symput ('PBPQ_ID', 'PBPQ6.1_2020');    
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-03-05-2020-06-30.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-05-07-2020-06-29.xlsx'); 
 	call symput ('finalexportflagged', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_flagged_20200311.txt');
+		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_flagged_2020511.txt');
 	call symput ('finalexportdropped', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_finalPBPQ_20200311.txt');
+		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_finalPBPQ_20200511.txt');
 	call symput ('riskfile', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_RISK_PBFebUpsell_20200311.csv');
+		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_RISK_PBFebUpsell_20200511.csv');
 	*** This is the file we send to Risk to audit ---------------- ***;
 	call symput ('eqxfile', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_RISK_PBFebUpsell_SU_20200311.csv');  
+		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_RISK_PBFebUpsell_SU_20200511.csv');  
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\PBPQ\PBPQ_PBPQSuppression_20200311.txt');
+		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_PBPQSuppression_20200511.txt');
 run;
 
 data loan1;
@@ -853,7 +853,7 @@ data merged_l_b2;
 	if ownbr = "1003" and zip =: "87112" then ownbr = "1013";
 	if brno = "1016" then brno = "1008";
 	if brno = "1003" and zip =: "87112" then brno = "1013";
-	if purcd in ("011", "020", "015", "16", "21") 
+	if purcd in ("020", "015", "16", "21") 
 		then dlqren_flag = "X";
 	if ownbr = "0251" then ownbr = "0580";
 	if ownbr = "0252" then ownbr = "0683";
@@ -872,6 +872,32 @@ data merged_l_b2;
 	if ownbr = "0668" then ownbr = "0680";
 	if ownbr = "1018" then ownbr = "1008";
 	if brno = "1018" then brno = "1008";
+
+	/*COVID*/
+	*IF OWNST = "NM" THEN BADBRANCH_FLAG = "X";
+	/*Tiger King Branches*/
+	IF OWNBR = "0415" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0504" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0518" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0521" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0537" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0585" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0586" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0589" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0904" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0910" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0915" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0917" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0918" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0921" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0923" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1001" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1002" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1007" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1010" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1011" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1012" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1014" THEN offer_type = "Branch ITA";
 run;
 
 *** Ed's dnsdnh -------------------------------------------------- ***;
