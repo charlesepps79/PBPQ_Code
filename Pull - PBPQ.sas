@@ -873,10 +873,11 @@ data merged_l_b2;
 	if ownbr = "0668" then ownbr = "0680";
 	if ownbr = "1018" then ownbr = "1008";
 	if brno = "1018" then brno = "1008";
-
+	
 	/*COVID*/
 	*IF OWNST = "NM" THEN BADBRANCH_FLAG = "X";
 	/*Tiger King Branches*/
+	/*
 	IF OWNBR = "0415" THEN offer_type = "Branch ITA";
 	IF OWNBR = "0504" THEN offer_type = "Branch ITA";
 	IF OWNBR = "0518" THEN offer_type = "Branch ITA";
@@ -899,6 +900,7 @@ data merged_l_b2;
 	IF OWNBR = "1011" THEN offer_type = "Branch ITA";
 	IF OWNBR = "1012" THEN offer_type = "Branch ITA";
 	IF OWNBR = "1014" THEN offer_type = "Branch ITA";
+	*/
 run;
 
 *** Ed's dnsdnh -------------------------------------------------- ***;
