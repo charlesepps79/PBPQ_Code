@@ -1,4 +1,4 @@
-*** Change dates in the lines immediately below along with file    ***;
+﻿*** Change dates in the lines immediately below along with file    ***;
 *** paths. For the files paths, you will likely need to create a   ***;
 *** new folder "PBPQ" in the appropriate month file. Do not change ***;
 *** the argument to the left of the comma - only change what is to ***;
@@ -35,7 +35,7 @@ data _null_;
 	call symput ('PBPQ_ID', 'PBPQ6.1_2020');    
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-05-07-2020-06-29.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-05-14-2020-06-30.xlsx'); 
 	call symput ('finalexportflagged', 
 		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_flagged_2020511.txt');
 	call symput ('finalexportdropped', 
@@ -708,7 +708,7 @@ run;
 data bk2yrdrops;
 	set dw.vw_loan(
 		keep = ssno1_rt7 OwnBr bnkrptdate BnkrptChapter entdate);
-	where EntDate > "&_2YR";
+	where EntDate > "&_5YR";
 run;
 
 data bk2yrdrops; 
@@ -824,8 +824,9 @@ run;
 *** Bad Branch Flags --------------------------------------------- ***;
 data merged_l_b2;
 	set merged_l_b2;
-	if ownbr in("600", "9000", "198", "1", "0001", "0198", "0600", 
-				"0398", "0498", "0698", "0898") 
+	if ownbr in("1", "9000", "198", "498", "580", "600", "698", "898", 
+				"0001", "9000", "0198", "0498", "0580", "0600", "0698", 
+				"0898") 
 		then BadBranch_flag = "X";
 	if substr(ownbr, 3, 2) = "99" then BadBranch_flag = "X";
 	*** Flag incomplete info ------------------------------------- ***;
@@ -853,7 +854,7 @@ data merged_l_b2;
 	if ownbr = "1003" and zip =: "87112" then ownbr = "1013";
 	if brno = "1016" then brno = "1008";
 	if brno = "1003" and zip =: "87112" then brno = "1013";
-	if purcd in ("020", "015", "16", "21") 
+	if purcd in ("020", "015", "016", "021", "022") 
 		then dlqren_flag = "X";
 	if ownbr = "0251" then ownbr = "0580";
 	if ownbr = "0252" then ownbr = "0683";
@@ -1082,7 +1083,7 @@ data atb2;
 	last12_60 = sum(recent6_60, first6_60);
 run;
 
-*** count cd30, cd60,recent6,first6 by bracctno (*recall loan      ***;
+*** count cd30, cd60, recent6, first6 by bracctno (*recall loan      ***;
 *** potentially counted for each month) -------------------------- ***;
 proc summary 
 	data = atb2 nway missing;
