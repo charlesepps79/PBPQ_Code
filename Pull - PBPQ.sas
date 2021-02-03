@@ -32,21 +32,21 @@ OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
 %PUT "&_1DAY";
 
 data _null_;
-	call symput ('PBPQ_ID', 'PBPQ6.1_2020');    
+	call symput ('PBPQ_ID', 'PBPQ03.1_2021');    
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-05-14-2020-06-30.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-01-28-2021-06-24.xlsx'); 
 	call symput ('finalexportflagged', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_flagged_2020511.txt');
+		'\\mktg-app01\E\Production\2021\03_March_2021\PBPQ\PBPQ_flagged_20210202.txt');
 	call symput ('finalexportdropped', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_finalPBPQ_20200511.txt');
+		'\\mktg-app01\E\Production\2021\03_March_2021\PBPQ\PBPQ_finalPBPQ_20210202.txt');
 	call symput ('riskfile', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_RISK_PBFebUpsell_20200511.csv');
+		'\\mktg-app01\E\Production\2021\03_March_2021\PBPQ\PBPQ_RISK_PBFebUpsell_20210202.csv');
 	*** This is the file we send to Risk to audit ---------------- ***;
 	call symput ('eqxfile', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_RISK_PBFebUpsell_SU_20200511.csv');  
+		'\\mktg-app01\E\Production\2021\03_March_2021\PBPQ\PBPQ_RISK_PBFebUpsell_SU_20210202.csv');  
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\PBPQ\PBPQ_PBPQSuppression_20200511.txt');
+		'\\mktg-app01\E\Production\2021\03_March_2021\PBPQ\PBPQ_PBPQSuppression_20210202.txt');
 run;
 
 data loan1;
@@ -826,7 +826,7 @@ data merged_l_b2;
 	set merged_l_b2;
 	if ownbr in("1", "9000", "198", "498", "580", "600", "698", "898", 
 				"0001", "9000", "0198", "0498", "0580", "0600", "0698", 
-				"0898") 
+				"0898", "398", "0398") 
 		then BadBranch_flag = "X";
 	if substr(ownbr, 3, 2) = "99" then BadBranch_flag = "X";
 	*** Flag incomplete info ------------------------------------- ***;
@@ -1459,6 +1459,7 @@ data final3;
 	if "2018-01-01" <= entdate <= "2018-12-31" then EntYear = 2018;
 	if "2019-01-01" <= entdate <= "2019-12-31" then EntYear = 2019;
 	if "2020-01-01" <= entdate <= "2020-12-31" then EntYear = 2020;
+	if "2021-01-01" <= entdate <= "2021-12-31" then EntYear = 2021;
 run;
 
 data check;

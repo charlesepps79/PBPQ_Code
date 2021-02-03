@@ -1,13 +1,13 @@
 ﻿data _null_;
-	call symput ('_1yr1month','2018-5-05');
-	call symput ('yesterday','2019-6-04');
+	call symput ('_1yr1month','2019-12-20');
+	call symput ('yesterday','2021-01-18');
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2019\07_JULY_2019\PBPQ\JULPBPQSuppression.txt');
+		'\\mktg-app01\E\Production\2021\02_February_2021\PBPQ\FEBPBPQSuppression.txt');
 run;
 	
 data pbpq;
 ** \\server-fs01\Marketing\Risk\PBPQ\PBPQmmm2017_Drop\PBmmmUpsell.csv';
-	set WORK.risk;
+	set WORK.PBPQ_RISK_PBFebUpsell_20210111;
 run;					
 
 proc format; /* define format for delq*/
@@ -96,50 +96,96 @@ data atb4; *create new counter variables;
    drop cd30;
    format delq1-delq12 cdfmt.;
 run;
-proc sort data=atb4 nodupkey; by bracctno; run; *sort to merge;
-data dlq; set atb4; drop null; *dropping the null column (not nulls in dataset); run;
-proc sort data=pbpq; by BrAcctNo; run;
-data x; *merge pull and dql information;
-merge pbpq(in=x) dlq(in=y);
-by bracctno;
-if x=1;
-run;
-data x2; *For HH Suppression;
-set x (keep= bracctno delq1);
-if delq1="" | delq1=1 then DLQDrop="Keep";
-else DLQDrop="Drop";
+
+proc sort 
+	data = atb4 nodupkey; 
+	by bracctno; 
+run; *sort to merge;
+
+data dlq; 
+	set atb4; 
+	drop null; *dropping the null column (not nulls in dataset); 
 run;
 
+proc sort 
+	data = pbpq; 
+	by BrAcctNo; 
+run;
+
+data x; *merge pull and dql information;
+	merge pbpq(in = x) dlq(in = y);
+	by bracctno;
+	if x = 1;
+run;
+
+data x2; *For HH Suppression;
+	set x(
+		keep = bracctno delq1);
+	if delq1 = "" | delq1 = 1 then DLQDrop = "Keep";
+	else DLQDrop = "Drop";
+run;
 
 data pullnetbal;
-set dw.atb_data(keep=bracctno netbal yearmonth);
+	set dw.vw_AgedTrialBalance(
+		keep = LoanNumber NetBalance BOM);
+	rename LoanNumber = bracctno
+		   NetBalance = netbal
+		   BOM = yearmonth;
 run;
-proc sort data=pullnetbal;
-by  BrAcctNo descending yearmonth;
+
+proc sort 
+	data = pullnetbal;
+	by BrAcctNo descending yearmonth;
 run;
+
 data pullnetbal2;
-set pullnetbal;
-by  BrAcctNo descending yearmonth;
-if first.bracctno then output pullnetbal2;
+	set pullnetbal;
+	by BrAcctNo descending yearmonth;
+	if first.bracctno 
+		then output pullnetbal2;
 run;
-proc sort data=pullnetbal2 nodupkey; by bracctno; run;
-proc sort data=x2; by bracctno; run;
+
+proc sort 
+	data = pullnetbal2 nodupkey; 
+	by bracctno; 
+run;
+
+proc sort 
+	data = x2; 
+	by bracctno; 
+run;
+
 data x3;
-merge x2(in=x) pullnetbal2;
-by bracctno;
-if x;
-keep bracctno dlqdrop netbal yearmonth;
-run;
-data x4; set x3; drop yearmonth; run;
-proc sort data=x4 nodupkey; by bracctno; run;
-
-ods excel; proc contents data=x4; run; ods excel close;
-
-
-proc export data=x4 outfile="&HHsuppression" dbms=tab;
+	merge x2(in = x) pullnetbal2;
+	by bracctno;
+	if x;
+	keep bracctno dlqdrop netbal yearmonth;
 run;
 
-proc tabulate data=x4;
-class DLQDrop;
-tables DLQDrop;
+data x4; 
+	set x3; 
+	drop yearmonth; 
+run;
+
+proc sort 
+	data = x4 nodupkey; 
+	by bracctno; 
+run;
+
+ods excel; 
+
+proc contents 
+	data = x4; 
+run; 
+
+ods excel close;
+
+proc export 
+	data = x4 outfile = "&HHsuppression" dbms = tab;
+run;
+
+proc tabulate 
+	data = x4;
+	class DLQDrop;
+	tables DLQDrop;
 run;
