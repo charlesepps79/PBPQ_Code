@@ -65,7 +65,7 @@ data loan1;
 		  poffdate = "" & 
 		  ClassTranslation not in ("Auto-I", "Auto-D") & 
 		  ownst in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
-					"TX", "VA", "WI");
+					"TX", "VA", "WI", "IL", "UT");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if cifno not =: "B";
 run;
@@ -232,7 +232,7 @@ data loanextra;
 		  pldate = "" & 
 		  bnkrptdate = "" & 
 		  ownst in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
-					"TX", "VA", "WI") & 
+					"TX", "VA", "WI", "IL", "UT") & 
 		  ClassTranslation not in ("Auto-I", "Auto-D");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if ssno1 =: "99" then BadSSN = "X"; /* Flag bad ssns */
@@ -278,7 +278,7 @@ data loanparadata;
 		  pldate = "" & 
 		  bnkrptdate = "" & 
 		  ownst not in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
-						"TX", "VA", "WI") & 
+						"TX", "VA", "WI", "IL", "UT") & 
 		  ClassTranslation not in ("Auto-I", "Auto-D");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if ssno1 =: "99" then BadSSN = "X"; /* Flag bad ssns */
@@ -839,7 +839,7 @@ data merged_l_b2;
 	if Lastname = "" then MissingInfo_flag = "X";
 	*** Find states outside of footprint ------------------------- ***;
 	if state not in("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
-					"TX", "VA", "WI") then OOS_flag = "X"; 
+					"TX", "VA", "WI", "IL", "UT") then OOS_flag = "X"; 
 	if confidential = "Y" then DNS_DNH_flag = "X"; /* Flag DNS DNH */
 	if solicit = "N" then DNS_DNH_flag = "X"; /*Flag DNS DNH */
 	if ceaseanddesist = "Y" then DNS_DNH_flag = "X"; /* Flag DNS DNH */
