@@ -1,13 +1,13 @@
 ﻿data _null_;
-	call symput ('_1yr1month','2020-10-10');
-	call symput ('yesterday','2021-11-10');
+	call symput ('_1yr1month','2021-04-12');
+	call symput ('yesterday','2022-05-13');
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\PBPQ\DECPBPQSuppression.txt');
+		'\\mktg-app01\E\Production\2022\06_June_2022\PBPQ\JUNPBPQSuppression.txt');
 run;
 	
 data pbpq;
 ** \\server-fs01\Marketing\Risk\PBPQ\PBPQmmm2017_Drop\PBmmmUpsell.csv';
-	set WORK.PBPQ_RISK_PBDecUpsell_20211104;
+	set WORK.PBPQ_RISK_PBAugUpsell_20220506;
 run;					
 
 proc format; /* define format for delq*/

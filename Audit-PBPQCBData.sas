@@ -9,7 +9,7 @@
 *** For confirmation: O\Risk\PBPQ\CriteriaPBPQ_June_2017 --------- ***;
 
 data _null_;
-	call symput("cbdata", "WORK.'31332112.m01.prod.NTB.audit.pbpq'n");
+	call symput("cbdata", "WORK.'31332201.m01.prod.NTB.audit.pbpq'n");
 run;
 
 title;

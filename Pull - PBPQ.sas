@@ -32,21 +32,21 @@ OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
 %PUT "&_1DAY";
 
 data _null_;
-	call symput ('PBPQ_ID', 'PBPQ12.1_2021');    
+	call symput ('PBPQ_ID', 'PBPQ06.1_2022');    
 	*** current file --------------------------------------------- ***;
 	call symput ('dnhfile', 
-		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-10-28-2021-06-28.xlsx'); 
+		'\\server-lcp\LiveCheckService\DNHCustomers\DNHFile-05-05-2022-06-26.xlsx'); 
 	call symput ('finalexportflagged', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\PBPQ\PBPQ_flagged_20211104.txt');
+		'\\mktg-app01\E\Production\2022\06_June_2022\PBPQ\PBPQ_flagged_20220506.txt');
 	call symput ('finalexportdropped', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\PBPQ\PBPQ_finalPBPQ_20211104.txt');
+		'\\mktg-app01\E\Production\2022\06_June_2022\PBPQ\PBPQ_finalPBPQ_20220506.txt');
 	call symput ('riskfile', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\PBPQ\PBPQ_RISK_PBAugUpsell_20211104.csv');
+		'\\mktg-app01\E\Production\2022\06_June_2022\PBPQ\PBPQ_RISK_PBAugUpsell_20220506.csv');
 	*** This is the file we send to Risk to audit ---------------- ***;
 	call symput ('eqxfile', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\PBPQ\PBPQ_RISK_PBAugUpsell_SU_20211104.csv');  
+		'\\mktg-app01\E\Production\2022\06_June_2022\PBPQ\PBPQ_RISK_PBAugUpsell_SU_20220506.csv');  
 	call symput ('HHsuppression', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\PBPQ\PBPQ_PBPQSuppression_20211104.txt');
+		'\\mktg-app01\E\Production\2022\06_June_2022\PBPQ\PBPQ_PBPQSuppression_20220506.txt');
 run;
 
 data loan1;
@@ -65,7 +65,7 @@ data loan1;
 		  poffdate = "" & 
 		  ClassTranslation not in ("Auto-I", "Auto-D") & 
 		  ownst in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
-					"TX", "VA", "WI", "IL", "UT");
+					"TX", "VA", "WI", "IL", "UT" "MS");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if cifno not =: "B";
 run;
@@ -232,7 +232,7 @@ data loanextra;
 		  pldate = "" & 
 		  bnkrptdate = "" & 
 		  ownst in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
-					"TX", "VA", "WI", "IL", "UT") & 
+					"TX", "VA", "WI", "IL", "UT" "MS") & 
 		  ClassTranslation not in ("Auto-I", "Auto-D");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if ssno1 =: "99" then BadSSN = "X"; /* Flag bad ssns */
@@ -278,7 +278,7 @@ data loanparadata;
 		  pldate = "" & 
 		  bnkrptdate = "" & 
 		  ownst not in ("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
-						"TX", "VA", "WI", "IL", "UT") & 
+						"TX", "VA", "WI", "IL", "UT" "MS") & 
 		  ClassTranslation not in ("Auto-I", "Auto-D");
 	ss7brstate = cats(ssno1_rt7, substr(ownbr, 1, 2));
 	if ssno1 =: "99" then BadSSN = "X"; /* Flag bad ssns */
@@ -824,9 +824,9 @@ run;
 *** Bad Branch Flags --------------------------------------------- ***;
 data merged_l_b2;
 	set merged_l_b2;
-	if ownbr in("1", "9000", "198", "498", "580", "600", "698", "898", 
-				"0001", "9000", "0198", "0498", "0580", "0600", "0698", 
-				"0898", "398", "0398") 
+	if ownbr in("1", "9000", "198", "498", "600", "698", "898", 
+				"0001", "9000", "0198", "0498", "0599", "0600", "0698", 
+				"0699","0799","0898","0899","0999","1099","1199", "398", "0398") 
 		then BadBranch_flag = "X";
 	if substr(ownbr, 3, 2) = "99" then BadBranch_flag = "X";
 	*** Flag incomplete info ------------------------------------- ***;
@@ -839,7 +839,7 @@ data merged_l_b2;
 	if Lastname = "" then MissingInfo_flag = "X";
 	*** Find states outside of footprint ------------------------- ***;
 	if state not in("AL", "GA", "MO", "NC", "NM", "OK", "SC", "TN", 
-					"TX", "VA", "WI", "IL", "UT") then OOS_flag = "X"; 
+					"TX", "VA", "WI", "IL", "UT" "MS") then OOS_flag = "X"; 
 	if confidential = "Y" then DNS_DNH_flag = "X"; /* Flag DNS DNH */
 	if solicit = "N" then DNS_DNH_flag = "X"; /*Flag DNS DNH */
 	if ceaseanddesist = "Y" then DNS_DNH_flag = "X"; /* Flag DNS DNH */
@@ -850,6 +850,7 @@ data merged_l_b2;
 	if ownst in("NC", "OK") & classtranslation = "Retail" then 
 		renewaldelete_flag = "X"; 
 	if curbal < 20 then curbal_flag = "X";
+    if ownbr = "0696" then State_Mismatch_flag = "";
 	if ownbr = "1016" then ownbr = "1008";
 	if ownbr = "1003" and zip =: "87112" then ownbr = "1013";
 	if brno = "1016" then brno = "1008";
@@ -1460,6 +1461,7 @@ data final3;
 	if "2019-01-01" <= entdate <= "2019-12-31" then EntYear = 2019;
 	if "2020-01-01" <= entdate <= "2020-12-31" then EntYear = 2020;
 	if "2021-01-01" <= entdate <= "2021-12-31" then EntYear = 2021;
+	if "2022-01-01" <= entdate <= "2022-12-31" then EntYear = 2022;
 run;
 
 data check;
